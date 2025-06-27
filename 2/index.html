@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>个人消费分析平台</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial; max-width: 1000px; margin: 0 auto; padding: 20px; }
+    .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .card { border: 1px solid #eee; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h1 { color: #333; text-align: center; }
+    canvas { max-width: 100%; }
+    @media (max-width: 768px) { .dashboard { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>📊 我的消费分析仪表盘</h1>
+  
+  <div class="dashboard">
+    <div class="card">
+      <h2>💰 月度收支</h2>
+      <canvas id="monthlyChart"></canvas>
+    </div>
+    
+    <div class="card">
+      <h2>🛒 消费分类</h2>
+      <canvas id="categoryChart"></canvas>
+    </div>
+    
+    <div class="card">
+      <h2>💳 支付方式</h2>
+      <canvas id="paymentChart"></canvas>
+    </div>
+    
+    <div class="card">
+      <h2>🎯 实际 vs 理想</h2>
+      <canvas id="comparisonChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // 模拟数据
+    const data = {
+      monthly: {
+        labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+        income: [18500, 18500, 19200, 19200, 20500, 20500],
+        expense: [12450, 11870, 13520, 14230, 12890, 15670]
+      },
+      categories: {
+        labels: ['住房', '餐饮', '交通', '购物', '娱乐', '教育', '医疗', '旅行'],
+        data: [38.4, 10.4, 5.6, 7.2, 4.8, 9.6, 2.8, 8.0],
+        colors: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC24A', '#EA80FC']
+      },
+      payments: {
+        labels: ['微信支付', '支付宝', '信用卡', '花呗', '银行转账', '现金'],
+        data: [45, 38, 28, 15, 6, 3],
+        colors: ['#07C160', '#1296DB', '#673AB7', '#FF9800', '#9E9E9E', '#795548']
+      },
+      comparison: {
+        labels: ['住房', '餐饮', '交通', '购物', '娱乐', '教育', '医疗', '旅行'],
+        actual: [4800, 1300, 700, 900, 600, 1200, 350, 1000],
+        ideal: [4000, 1000, 500, 600, 400, 1500, 200, 800]
+      }
+    };
+
+    // 初始化所有图表
+    function initCharts() {
+      // 1. 月度收支柱状图
+      new Chart(document.getElementById('monthlyChart'), {
+        type: 'bar',
+        data: {
+          labels: data.monthly.labels,
+          datasets: [
+            { label: '收入', data: data.monthly.income, backgroundColor: '#4CAF50' },
+            { label: '支出', data: data.monthly.expense, backgroundColor: '#F44336' }
+          ]
+        },
+        options: { responsive: true }
+      });
+
+      // 2. 消费类别环形图
+      new Chart(document.getElementById('categoryChart'), {
+        type: 'doughnut',
+        data: {
+          labels: data.categories.labels,
+          datasets: [{
+            data: data.categories.data,
+            backgroundColor: data.categories.colors
+          }]
+        }
+      });
+
+      // 3. 支付方式饼图
+      new Chart(document.getElementById('paymentChart'), {
+        type: 'pie',
+        data: {
+          labels: data.payments.labels,
+          datasets: [{
+            data: data.payments.data,
+            backgroundColor: data.payments.colors
+          }]
+        }
+      });
+
+      // 4. 实际vs理想消费雷达图
+      new Chart(document.getElementById('comparisonChart'), {
+        type: 'radar',
+        data: {
+          labels: data.comparison.labels,
+          datasets: [
+            { label: '实际消费', data: data.comparison.actual, backgroundColor: 'rgba(255, 99, 132, 0.2)' },
+            { label: '理想消费', data: data.comparison.ideal, backgroundColor: 'rgba(54, 162, 235, 0.2)' }
+          ]
+        }
+      });
+    }
+
+    // 页面加载后执行
+    window.addEventListener('load', initCharts);
+  </script>
+</body>
+</html>

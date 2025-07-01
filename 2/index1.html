@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Consumption Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        .chart {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Personal Consumption Management Visualization</h1>
+    <div id="income-expense-chart" class="chart"></div>
+    <div id="expense-category-chart" class="chart"></div>
+
+    <script>
+        async function fetchData() {
+            const response = await fetch('consumption_data.json');
+            const data = await response.json();
+            return data;
+        }
+
+        function initCharts(data) {
+            const months = data.map(d => d.Month);
+            const incomes = data.map(d => d.Income);
+            const expenses = data.map(d => d['Total Expense']);
+            const foodExpenses = data.map(d => d['Food Expense']);
+            const transportationExpenses = data.map(d => d['Transportation Expense']);
+            const entertainmentExpenses = data.map(d => d['Entertainment Expense']);
+            const shoppingExpenses = data.map(d => d['Shopping Expense']);
+            const medicalExpenses = data.map(d => d['Medical Expense']);
+            const otherExpenses = data.map(d => d['Other Expense']);
+
+            const incomeExpenseChart = echarts.init(document.getElementById('income-expense-chart'));
+            const expenseCategoryChart = echarts.init(document.getElementById('expense-category-chart'));
+
+            incomeExpenseChart.setOption({
+                title: { text: 'Income vs Expense' },
+                tooltip: { trigger: 'axis' },
+                xAxis: { type: 'category', data: months },
+                yAxis: { type: 'value' },
+                series: [
+                    { name: 'Income', type: 'line', data: incomes },
+                    { name: 'Expense', type: 'line', data: expenses }
+                ]
+            });
+
+            expenseCategoryChart.setOption({
+                title: { text: 'Expense Categories' },
+                tooltip: { trigger: 'axis' },
+                legend: { data: ['Food', 'Transportation', 'Entertainment', 'Shopping', 'Medical', 'Other'] },
+                xAxis: { type: 'category', data: months },
+                yAxis: { type: 'value' },
+                series: [
+                    { name: 'Food', type: 'bar', data: foodExpenses },
+                    { name: 'Transportation', type: 'bar', data: transportationExpenses },
+                    { name: 'Entertainment', type: 'bar', data: entertainmentExpenses },
+                    { name: 'Shopping', type: 'bar', data: shoppingExpenses },
+                    { name: 'Medical', type: 'bar', data: medicalExpenses },
+                    { name: 'Other', type: 'bar', data: otherExpenses }
+                ]
+            });
+        }
+
+        async function main() {
+            const data = await fetchData();
+            initCharts(data);
+        }
+
+        main();
+    </script>
+</body>
+</html>
